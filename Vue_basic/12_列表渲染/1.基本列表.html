@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基本列表</title>
+    <script src="../js/vue.js"></script>
+</head>
+<body>
+    <!-- 
+        v-for指令
+            1.用于展示列表数据
+            2.语法: v-for="(item, index) in xxx" :key="yyy"
+            3.可遍历:数组 对象 字符串(用得少) 指定次数(用得少)
+        备注: 你也可以用 of 替代 in 作为分隔符，因为它更接近 JavaScript 迭代器的语法
+            在Vue的v-for中 in 和 of 都能遍历对象和数组,但是为了更贴近 js迭代器语法, 建议数组用 of,对象用 in
+     -->
+    <div id="root">
+        <h2>人员列表(遍历数组)</h2>
+        <ul>
+            <li v-for="(p, k) of persons" :key="k">{{p.name}}-{{p.age}}-{{k}}</li>
+        </ul>
+        <h2>汽车信息(遍历对象)</h2>
+        <ul>
+            <li v-for="(val, k) in car" :key="k">{{val}}-{{k}}</li>
+        </ul>
+        <h2>测试遍历字符串</h2>
+        <ul>
+            <li v-for="(char, index) of str" :key="index">{{char}}-{{index}}</li>
+        </ul>
+        <h2>测试遍历指定次数</h2>
+        <ul>
+            <li v-for="(number, index) of 5" :key="index">{{number}}-{{index}}</li>
+        </ul>
+    </div>
+
+    <script>
+        Vue.config.productionTip = false;
+        const vm = new Vue({
+            el: "#root",
+            data:{
+                persons:[
+                    {id:'001',name:'张三',age:18},
+                    {id:'002',name:'李四',age:19},
+                    {id:'003',name:'王五',age:20},
+                ],
+                car:{
+                    name:'奥迪A8',
+                    price: '70万',
+                    color: 'black'
+                },
+                str:'hello'
+            }
+        })
+        
+    </script>
+</body>
+</html>

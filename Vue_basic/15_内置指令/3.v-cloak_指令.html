@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>v-cloak指令</title>
+    <script src="../js/vue.js"></script>
+    <style>
+        [v-cloak]{
+            display:none;
+        }
+    </style>
+</head>
+<body>
+    <!-- 
+        v-cloak指令(没有值)
+            1.本质是一个特殊属性, Vue实例创建完毕并接管容器后, 会删掉v-cloak属性
+            2.使用css配合v-cloak可以解决网速慢时页面展示出{{xxx}}的问题
+                (即v-cloak配合css可以使得标签在没有得到vue实例解析时不会展示到页面上)
+                (当Vue实例接管容器后,解析完并会删掉v-cloak属性,并把解析后的页面展示)
+     -->
+    <div id="root">
+        <h2 v-cloak>{{name}}</h2>
+    </div>
+    <script>
+        
+        Vue.config.productionTip = false;
+        const vm = new Vue({
+            el: "#root",
+            data:{
+                name:'尚硅谷'
+            }
+        })
+    </script>
+</body>
+</html>

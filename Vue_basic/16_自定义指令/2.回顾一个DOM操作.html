@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>回顾一个DOM操作</title>
+    <style>
+        .bgc{
+            background-color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <button id="demo">点我添加一个输入框</button><br>
+    <script>
+        let btn = document.getElementById('demo');
+        btn.onclick = function(){
+            let input = document.createElement('input');
+            input.classList.add('bgc');
+            // input.focus(); // 失效,顺序不对,这时该元素还没有插入到页面,没有获取焦点的资格
+            // console.log(input.parentElement); // null
+            document.body.appendChild(input);
+            input.focus(); // 生效
+            console.log(input.parentElement); // body元素
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>分析生命周期</title>
+    <script src="../js/vue.js"></script>
+</head>
+<body>
+    
+    <div id="root">
+        <h2>{{n}}</h2>
+        <button @click="add">点我n++</button>
+        <button @click="bye">点我销毁vm</button>
+    </div>
+
+    <script>
+        Vue.config.productionTip = false;
+        const vm = new Vue({
+            el: "#root",
+            // vue2会作为新模板替换掉选择的容器的内容,包括容器标签本身
+            // 题外话:vue3改成插入选择的容器作为容器的内容,即不替换容器标签本身
+            // template:`
+            // <div>
+            //     <h2>{{n}}</h2>
+            //     <button @click="add">点我n++</button>
+            // </div>`,
+            data:{
+                n:1
+            },
+            methods:{
+                add(){
+                    console.log('add');
+                    this.n++;
+                },
+                bye(){
+                    console.log('bye');
+                    this.$destroy();
+                }
+            },
+            beforeCreate() {
+                // 数据代理和监测的初始化之前执行
+                // 即响应式的数据初始化之前,vm_data和vm实例的data配置对象中属性还没有初始化
+                // 所以这里无法访问vm._data即vm实例的data配置对象中属性
+                console.log('beforeCreate');
+                console.log(this);
+            },
+            created() {
+                // 数据代理和监测的初始化之后执行
+                // 响应式的数据初始化完成,即vm_data和vm实例的data配置对象中属性初始化完成
+                // 可以访问vm._data即vm实例的data配置对象中属性了
+                console.log('created');
+                console.log(this);
+            },
+            beforeMount() {
+                console.log('beforeMount');
+                console.log(this);
+                // 这时候初始化的虚拟DOM已经生成,准备挂载(该函数是挂载之前执行)
+                // 因为这里还没有把虚拟DOM转换成真实DOM并替换掉页面一开始未经解析的真实DOM
+                // 最终被虚拟DOM替换掉页面一开始未经解析的真实DOM(挂载过程)
+                // 所以这里会被
+                document.querySelector('h2').innerText='哈哈'
+                // debugger;
+            },
+            mounted() {
+                // 挂载完成
+                // 初始化的虚拟DOM转换成真实DOM并替换掉页面一开始未经解析的真实DOM
+                // 意味着Vue实例的初始化完成,一般网络请求,订阅信息,定时器,操作DOM(不推荐)等在这里编写
+                console.log('mounted');
+                console.log(this);
+                console.log(this.$el instanceof HTMLElement); // true
+                // debugger;
+            },
+            beforeUpdate() {
+                // 此时数据更新了,但页面的数据还是旧的,即数据和页面尚未保持同步
+                // update可以理解为生成新虚拟DOM对比旧虚拟DOM(diff算法),将有所更新的虚拟DOM转换成真实DOM替换原有旧DOM
+                console.log('beforeUpdate');
+                console.log(this.n);
+                // debugger;
+            },
+            updated() {
+                // update完毕后执行,页面与数据已经保持同步了
+                console.log('updated');
+                // debugger;
+            },
+            beforeDestroy() {
+                console.log('beforeDestroy');
+                console.log(this.n);
+                // 这里还能访问到vm身上的东西,变量值也能操作,但是即便操作了也不会响应到页面上
+                // 因为看生命周期图箭头也知道一旦vm.$destroy(),到了销毁流程时是不可逆的,不会再跑回去执行beforeUpdate和更新虚拟DOM已经及updated这些了
+                // 但是在大多数场景下不应该去调用vm.$destroy(),这算是vm自己干掉自己(自杀),这是不太不合理的
+                // 最好使用v-if 和 v-for 指令以数据驱动的方式控制子组件的生命周期(他杀)
+                this.add()
+            },
+            // destroyed() {
+            //     // 已经销毁了,这里知道有这个钩子就行,一般不会去编写
+            // },
+        })
+    </script>
+</body>
+</html>

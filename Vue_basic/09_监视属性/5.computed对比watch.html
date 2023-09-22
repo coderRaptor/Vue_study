@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>.姓名案例_watch实现</title>
+    <script src="../js/vue.js"></script>
+</head>
+<body>
+    <!-- 
+        computed和watch之间的区别:
+            1.computed能完成的功能,watch都可以完成
+            2.watch能完成的功能,computed不一定能完成,例如改变后延迟一秒呈现出结果
+        两个重要的小原则:
+            1.所有被Vue实例管理的函数,最后写成普通函数,这样this的指向才是vm 或 组件实例对象
+            2.所有不被Bue所管理的函数(定时器的回调函数、ajax的回调函数、Promise的回调函数等),最好写成箭头函数,
+                这样this的指向才是 vm 或 组件实例对象
+        
+        备注:   监听能完成功能的计算不一定能，例如延迟结果呈现，
+                因为计算属性get中return不能异步返回（这里学的时候想过用async/await但是这是配合Promise在这里并不能用）,
+                而监听是修改值,因此可以setTimeout延迟修改,但是某些情况计算属性有优势,正如起名,
+                如果是根据两个或以上的多个已有数据计算加工出新结果值,其中一个数据的更新都会引起结果值更新(模板更新),
+                以计算属性来实现一步奏效,而使用监听则需要监听每个依赖的属性数据
+     -->
+    <div id="root">
+        姓: <input type="text" v-model="firstName"><br>
+        名: <input type="text" v-model="lastName"><br>
+        全名: <span>{{fullName}}</span><br>
+    </div>
+    <script>
+        Vue.config.productionTip = false;
+        const vm = new Vue({
+            el: "#root",
+            data:{
+                firstName: "张",
+                lastName: "三",
+                fullName: "张-三",
+            },
+           watch:{
+            firstName(val){
+                // 延迟一秒呈现输入结果,computed无法实现,因为return无法进行异步操作(async/await是配合Promise的,不能用这里)
+                setTimeout(()=>{
+                    this.fullName = val + '-' + this.lastName;
+                }, 1000);
+            },
+            lastName(val){
+                this.fullName = this.firstName + '-' + val;
+            }
+           }
+        })
+    </script>
+</body>
+</html>

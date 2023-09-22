@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>过滤器</title>
+    <script src="../js/vue.js"></script>
+    <script src="../js/dayjs.min.js"></script>
+</head>
+<body>
+    <!-- 
+        注意: Vue3.x移除了filters,并且不再支持,其功能实现可以用计算属性取代,这里学的是Vue2.x
+        过滤器:
+            定义: 对要显示的数据进行特定格式化后再显示(适用于一些简单逻辑的处理)
+            语法:
+                1.注册过滤器: Vue.filter(name,callback) 或 new Vue中的配置对象添加filter:{}
+                2.使用过滤器: {{ xxx | 过滤器名}} 或 v-bind:属性 = "xxx | 过滤器名"
+            备注:
+                1.过滤器也可以接收额外参数,多个过滤器也可以串连
+                2.并没有改变原本的数据,是产生新的对应的数据
+     -->
+    
+    <div id="root">
+        <h2>显示格式化后的时间</h2>
+        <!-- 计算属性实现 -->
+        <h3>现在是: {{fmtTime}}</h3>
+        <!-- methods实现 -->
+        <h3>现在是: {{getFmtTime()}}</h3>
+        <!-- 过滤器实现 -->
+        <h3>现在是 {{time | timeFormater}}</h3>
+        <!-- 过滤器实现(传参) -->
+        <!-- 从左往右传参调用(左边返回值作参数传参),最右边结果值为最终插值表达式的值 -->
+        <!-- 这里的 'YYYY_MM_DD' 是作为第二个参数, time 会被当成第一个参数传入 -->
+        <h3>现在是 {{time | timeFormater('YYYY_MM_DD') | mySlice}}</h3>
+    </div>
+
+    <div id="root2">
+        <h1>{{introduce | mySlice}}</h1>
+    </div>
+    <script>
+        Vue.config.productionTip = false;
+
+        // 定义全局过滤器,使得在任何一个Vue实例挂载的容器都可以使用
+        // 必须写在new Vue之前
+        Vue.filter('mySlice', function(val){
+            return val.slice(0,4);
+        })
+
+        const vm = new Vue({
+            el: "#root",
+            data:{
+                time:1692064860702, // 时间戳
+            },
+            computed:{
+                fmtTime(){
+                    return dayjs(this.time).format('YYYY年MM月DD日 hh:mm:ss');
+                }
+            },
+            methods:{
+                getFmtTime(){
+                    return dayjs(this.time).format('YYYY年MM月DD日 hh:mm:ss');
+                }
+            },
+            filters:{
+                timeFormater(val, str='YYYY年MM月DD日 hh:mm:ss'){
+                    console.log('@',val);
+                    return dayjs(val).format(str);
+                },
+                // mySlice(val){
+                //     return val.slice(0,4);
+                // }
+            }
+        })
+
+        new Vue({
+            el:'#root2',
+            data:{
+                introduce:'hello'
+            }
+        })
+        
+    </script>
+</body>
+</html>

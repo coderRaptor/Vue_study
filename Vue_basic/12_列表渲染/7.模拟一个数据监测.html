@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模拟一个数据监测</title>
+</head>
+<body>
+    
+    <div id="root"></div>
+
+    <script>
+        let data = {
+            name: 'zhangsan',
+            address:'shenzhen'
+        }
+        
+        // 创建一个监视的实例对象,用于监视data中属性的变化
+        const obs = new Observer(data);
+        // 准备一个vm实例对象
+        let vm = {};
+        // 最后vm._data和data都指向obs,导致data === vm._data 为 true
+        vm._data = data = obs;
+        function Observer(obj){
+            // 汇总对象中所有的属性形成一个数组
+            const keys = Object.keys(obj);
+            // 注意这里只是模拟了一层,而且这里模拟的是对象的监测,后面会学到数组的监测原理
+            // 真正的Vue这里里面是递归收集,比如属性是数组,里面还有对象,还会给里面对象进行属性配置
+            // 遍历
+            for (const k of keys) {
+                Object.defineProperty(this,k,{
+                    get(){
+                        return obj[k];
+                    },
+                    set(val){
+                        obj[k]=val;
+                        console.log(`${k}被改了,我要去解析模板,生成虚拟DOM...然后对比...其他事`);
+                    }
+                })
+            }
+
+        }
+    </script>
+</body>
+</html>

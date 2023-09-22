@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深度监视简写</title>
+    <script src="../js/vue.js"></script>
+</head>
+<body>
+    
+    <div id="root">
+        <h2>今天天气很{{info}}</h2>
+        <button @click="changeWeather">切换天气</button>
+    </div>
+    <script>
+        Vue.config.productionTip = false;
+        const vm = new Vue({
+            el: "#root",
+            data: {
+                isHot: true,
+            },
+            methods:{
+                changeWeather(){
+                    this.isHot = !this.isHot;
+                }
+            },
+            computed:{
+                info(){
+                    return this.isHot ? '炎热' : '凉爽';
+                }
+            },
+            watch:{
+                // 计算属性一样可以监视
+                // 正常写法
+                // isHot:{
+                //     // deep:true, //深度监视
+                //     // immediate:true, //初始化时是否让handler调用一下,不写默认为false
+                //     // handler什么时候被调用? 当isHot发生改变时
+                //     handler(val, oldVal){
+                //         console.log("isHot被修改了",val, oldVal);
+                //     }
+                // },
+
+                // 当监视属性配置中只有handler函数即其他配置为默认值时可简写
+                // 简写
+                // isHot(val, oldVal){
+                //     console.log("isHot被修改了",val, oldVal);
+                // }
+            }
+        })
+
+        // 正常写法
+        // vm.$watch('isHot', {
+        //     immediate:true, //初始化时是否让handler调用一下,不写默认为false
+        //     // handler什么时候被调用? 当isHot发生改变时
+        //     handler(val, oldVal){
+        //         console.log("isHot被修改了", val, oldVal);
+        //     }
+        // })
+
+        // 只有handler时简写(不要用箭头函数,会导致this问题)
+        vm.$watch('isHot', function(val,oldVal){
+            console.log("isHot被修改了", val, oldVal);
+        })
+    </script>
+    
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="../js/vue.js"></script>
+</head>
+<body>
+    <!-- 
+        关于VueComponent:
+            1.school组件本质是一个名为VueComponent的构造函数,且不是程序员定义的,是Vue.extend生成的
+
+            2.我们只需要写<school></school>或</school>, Vue解析时会帮我们创建school组件的实例对象,
+                即Vue帮我们执行: new VueComponent(options)
+
+            3.特别注意: 每次调用Vue.extend, 返回的都是一个全新的VueComponent构造函数！！！
+                        可以搜源码，每次Vue.extend返回全新VueComponent构造函数
+            
+            4.关于this指向:
+                (1).组件配置中:
+                        data函数、methods中的函数、watch中的函数、computed中的函数、他们的this均是【VueComponent实例对象】
+                (2).new Vue(options)配置中:
+                        data函数、methods中的函数、watch中的函数、computed中的函数、他们的this均是【Vue实例对象】
+
+            5.VueComponent的实例对象, 称为:组件实例对象(有的人叫它为 vc)
+                Vue的实例对象, 以后简称 vm
+     -->
+    
+    <div id="root">
+        <school></school>
+        <hello></hello>
+    </div>
+
+    <script>
+        Vue.config.productionTip = false;
+
+        // 定义hello组件
+        const hello = Vue.extend({
+            template:`
+            <div>
+                <h2>你好啊!{{name}}</h2>
+            </div>
+            `,
+            data(){
+                return {
+                    name:'Tom'
+                }
+            }
+        })
+
+        // 定义school组件
+        const school = Vue.extend({
+            template: `
+            <div>
+                <h2>学校名称: {{schoolName}}</h2>
+                <h2>学校地址: {{address}}</h2>
+                <button @click=showName>点我提示学习名称</button>
+            </div>
+            `,
+            // 组件定义时,一定不要写el配置项,因为最终所有的组件都要被一个vm管理,由vm决定服务于哪个容器
+            data() {
+                return {
+                    schoolName: '尚硅谷',
+                    address: '北京昌平'
+                }
+            },
+            methods: {
+                showName(){
+                    console.log('showName',this);
+                    console.log(this.schoolName);
+                }
+            },
+        })
+
+        console.log(school);
+        console.dir(school);
+        // hello和school是两个VueComponent构造函数,相互独立,是两个引用地址值,
+        // 指向堆中两个函数对象,这两个函数对象都是内容相同的VueComponent构造函数
+        // 定义的组件的本质就是VueComponent构造函数,所有定义的组件都是.
+        // 我想你不会问为什么,假设是同一个构造函数,那所有组件都指向同一个引用 ? 所有组件都是同一个组件 ? 傻吗?
+        hello.a = 99;
+        console.log('@',hello.a);
+        console.log('#',school.a);
+
+        const vm = new Vue({
+            el:'#root',
+            components:{
+                school,
+                hello
+            }
+        })
+    </script>
+</body>
+</html>
